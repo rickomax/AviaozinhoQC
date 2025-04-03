@@ -13,3 +13,6 @@ This repository contains the **QuakeC scripts** used in the game _"Aviãozinho d
 void unlock_achievement(string name);
 void update_stats(string name, int value);
 ```
+
+This code supports unlocking achievements through trigger messages.  
+To use it, simply set the message to `unlock_achievement("name")`, and the achievement will be triggered.

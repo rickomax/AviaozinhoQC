@@ -11,7 +11,7 @@ This repository contains the **QuakeC scripts** used in the game _"Aviãozinho d
 
 ```c
 void unlock_achievement(string name);
-void update_stats(string name, int value);
+void update_stat(string name, int value);
 ```
 
 This code supports unlocking achievements through trigger messages.  

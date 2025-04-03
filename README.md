@@ -11,5 +11,5 @@ This repository contains the **QuakeC scripts** used in the game _"Aviãozinho d
 
 ```c
 void unlock_achievement(string name);
-void update_stats(string name, float value);
+void update_stats(string name, int value);
 ```

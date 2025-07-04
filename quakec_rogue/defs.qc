@@ -885,12 +885,12 @@ void(entity ownerEntity) sphere_remove;
 
 // -----------------------------------------------------------------------------------
 // AVIÃOZINHO
-// FUNÇÕES CUSTOMIZADAS
+// CUSTOM FUNCTIONS
 // -----------------------------------------------------------------------------------
 void(string name) unlock_achievement                           		= #50;
 void(string name, int value) update_stat                          	= #71;
 // -----------------------------------------------------------------------------------
-// FUNÇÕES DE STRING
+// STRING FUNCTIONS
 // -----------------------------------------------------------------------------------
 float(string s) strlen = #114;
 string(string s, float start, float length) substring = #116;

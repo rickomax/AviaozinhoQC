@@ -504,7 +504,7 @@ void() ClientKill =
 // ZOID--
 	if (self.suicide_count > 3)
 	{
-		sprint(self, "vasqed himself too much\n");
+		sprint(self, "$qc_suicided_too_much");
 		return;
 	}
     TeamDropFlagOfPlayer(self);
@@ -531,7 +531,7 @@ void() ClientKill =
 		}
 	}
 
-	bprint("vasqed himself \n", self.netname);
+	bprint("$qc_suicides", self.netname);
 	set_suicide_frame ();
 	self.modelindex = modelindex_player;
 	self.frags = self.frags - 2;	// extra penalty
@@ -1412,7 +1412,7 @@ void() CheckPowerups =
 		{
 			if (self.invisible_time == 1)
 			{
-				sprint(self, "YOUR ASS IS BECOMING VISIBLE \n");
+				sprint(self, "$qc_ring_fade");
 				stuffcmd (self, "bf\n");
 				sound (self, CHAN_AUTO, "items/inv2.wav", 1, ATTN_NORM);
 				self.invisible_time = time + 1;
@@ -1447,7 +1447,7 @@ void() CheckPowerups =
 		{
 			if (self.invincible_time == 1)
 			{
-				sprint(self, "YOUR ASS IS LOSING PROTECTION \n");
+				sprint(self, "$qc_protection_fade");
 				stuffcmd (self, "bf\n");
 				sound (self, CHAN_AUTO, "items/protect2.wav", 1, ATTN_NORM);
 				self.invincible_time = time + 1;
@@ -1482,7 +1482,7 @@ void() CheckPowerups =
 		{
 			if (self.super_time == 1)
 			{
-				sprint(self, "GPL SOURCE CODE IS LOSING LICENSE \n");
+				sprint(self, "$qc_quad_fade");
 				stuffcmd (self, "bf\n");
 				sound (self, CHAN_AUTO, "items/damage2.wav", 1, ATTN_NORM);
 				self.super_time = time + 1;
@@ -1544,7 +1544,7 @@ void() CheckPowerups =
 		{
 			if (self.shield_time == 1)
 			{
-				sprint (self, "SHIELD IS ENDING");
+				sprint (self, "$qc_shield_failing");
 				sound (self, CHAN_AUTO, "shield/fadeout.wav", 1, ATTN_NORM);
 				self.shield_time = 0;
 			}
@@ -1557,7 +1557,7 @@ void() CheckPowerups =
 		
 		if ( self.shield_finished < time)
 		{
-			sprint (self, "LOST THE SHIELD");
+			sprint (self, "$qc_shield_lost");
 			self.shield_finished = 0;
 			self.items2 = self.items2 - IT2_SHIELD;
 		}
@@ -1653,10 +1653,10 @@ called when a player connects to a server
 */
 void() ClientConnect =
 {
-	bprint("entered this thing\n", self.netname);
+	bprint("$qc_entered", self.netname);
 // -----------------------------------------------------------------------------------
 // AVIÃOZINHO
-// DESTRAVA ACHIEVEMENT (TO_NA_AREA)
+// UNLOCKS ACHIEVEMENT (TO_NA_AREA)
 // -----------------------------------------------------------------------------------
 	unlock_achievement("TO_NA_AREA");
 // -----------------------------------------------------------------------------------
@@ -1760,47 +1760,47 @@ void(entity targ, entity attacker) ClientObituary =
 				if (targ.weapon == 64 && targ.waterlevel > 1)
 				{
 					if (targ.watertype == CONTENT_SLIME)
-						bprint("slimed\n", targ.netname);
+						bprint("$qc_discharge_slime", targ.netname);
 
 					else if (targ.watertype == CONTENT_LAVA)
-						bprint("got lavad", targ.netname);
+						bprint("$qc_discharge_lava", targ.netname);
 
 					else
-						bprint("got waterd", targ.netname);
+						bprint("$qc_discharge_water", targ.netname);
 
 					return;
 				}
 				if (targ.weapon == 16)
-					bprint("GOT BORED AND DIED", targ.netname);
+					bprint("$qc_suicide_pin", targ.netname);
 				else if (rnum < 0.50)
-					bprint("SUICIDED", targ.netname);
+					bprint("$qc_suicide_bored", targ.netname);
 
 //ZOID--
 //gibbed for changing teams
 				else if (teamplay && (targ.team != targ.steam))
 				{
 					if (cvar("gamecfg") & GAMECFG_ALLOW_CHG)
-						bprint("is vira casaca changed teams\n", targ.netname);
+						bprint("$qc_changed_teams", targ.netname);
 					else
-						bprint("tried vira casaca cahnge teams\n", targ.netname);
+						bprint("$qc_tried_change_teams", targ.netname);
 				}
 //--ZOID
 
 				else
-					bprint("vasqeaded\n", targ.netname);
+					bprint("$qc_suicide_loaded", targ.netname);
 
 				return;
 			}
 			else if ( (teamplay == 2) && (targ.team > 0)&&(targ.team == attacker.team) )
 			{
 				if (rnum < 0.25)
-					bprint("teamated\n", attacker.netname);
+					bprint("$qc_ff_teammate", attacker.netname);
 				else if (rnum < 0.50)
-					bprint("glassed\n", attacker.netname);
+					bprint("$qc_ff_glasses", attacker.netname);
 				else if (rnum < 0.75)
-					bprint("otherteamed\n", attacker.netname);
+					bprint("$qc_ff_otherteam", attacker.netname);
 				else
-					bprint("friended\n", attacker.netname);
+					bprint("$qc_ff_friend", attacker.netname);
 				attacker.frags = attacker.frags - 1;
 				return;
 			}
@@ -1819,37 +1819,37 @@ void(entity targ, entity attacker) ClientObituary =
 				rnum = attacker.weapon;
 				if (rnum == IT_AXE)
 				{
-					bprint("vasqed axed\n", targ.netname, attacker.netname);
+					bprint("$qc_death_ax", targ.netname, attacker.netname);
 					return;
 				}
 //ZOID--
 				if (rnum == IT_GRAPPLE)
 				{
-					bprint("$qc_death_grappled\n", targ.netname, attacker.netname);
+					bprint("$qc_death_grappled", targ.netname, attacker.netname);
 					return;
 				}
 //--ZOID
 				if (rnum == IT_SHOTGUN)
 				{
-					bprint("shotgunned\n", targ.netname, attacker.netname);
+					bprint("$qc_death_sg", targ.netname, attacker.netname);
 					return;
 				}
 
 				if (rnum == IT_SUPER_SHOTGUN)
 				{
-					bprint("super shotgunned\n", targ.netname, attacker.netname);
+					bprint("$qc_death_dbl", targ.netname, attacker.netname);
 					return;
 				}
 
 				if (rnum == IT_NAILGUN)
 				{
-					bprint("glocked\n", targ.netname, attacker.netname);
+					bprint("$qc_death_nail", targ.netname, attacker.netname);
 					return;
 				}
 
 				if (rnum == IT_SUPER_NAILGUN)
 				{
-					bprint("aked\n", targ.netname, attacker.netname);
+					bprint("$qc_death_sng", targ.netname, attacker.netname);
 					return;
 				}
 
@@ -1857,12 +1857,12 @@ void(entity targ, entity attacker) ClientObituary =
 				{
 					if (targ.health < -40)
 					{
-						bprint("berimbaued\n", targ.netname, attacker.netname);
+						bprint("$qc_death_gl1", targ.netname, attacker.netname);
 						return;
 					}
 					else
 					{
-						bprint("berimbaueedd\n", targ.netname, attacker.netname);
+						bprint("$qc_death_gl2", targ.netname, attacker.netname);
 						return;
 					}
 				}
@@ -1875,17 +1875,17 @@ void(entity targ, entity attacker) ClientObituary =
 
 						if (rnum < 0.3)
 						{
-							bprint("flarocketed\n", targ.netname, attacker.netname);
+							bprint("$qc_death_rl_quad1", targ.netname, attacker.netname);
 							return;
 						}
 						else if (rnum < 0.6)
 						{
-							bprint("flarocketeeedd\n", targ.netname, attacker.netname);
+							bprint("$qc_death_rl_quad2", targ.netname, attacker.netname);
 							return;
 						}
 						else
 						{
-							bprint("flarockeeeteedd\n", targ.netname, attacker.netname);
+							bprint("$qc_death_rl1", targ.netname, attacker.netname);
 							return;
 						}
 					}
@@ -1893,12 +1893,12 @@ void(entity targ, entity attacker) ClientObituary =
 					{
 						if (targ.health < -40)
 						{
-							bprint("ded\n", targ.netname, attacker.netname);
+							bprint("$qc_death_rl2", targ.netname, attacker.netname);
 							return;
 						}
 						else
 						{
-							bprint("deeeeed\n", targ.netname, attacker.netname);
+							bprint("$qc_death_rl3", targ.netname, attacker.netname);
 							return;
 						}
 					}
@@ -1908,7 +1908,7 @@ void(entity targ, entity attacker) ClientObituary =
 				{
 					if (attacker.waterlevel > 1)
 					{
-						bprint("waterd\n", targ.netname, attacker.netname);
+						bprint("$qc_death_lg1", targ.netname, attacker.netname);
 						if (attacker.invincible_finished)
 						{
 							msg_entity = attacker;
@@ -1917,24 +1917,24 @@ void(entity targ, entity attacker) ClientObituary =
 						}
 					}
 					else
-						bprint("waterrrdd\n", targ.netname, attacker.netname);
+						bprint("$qc_death_lg2", targ.netname, attacker.netname);
 					
 					return;
 				}
 				
 				if (rnum == IT_LAVA_NAILGUN || rnum == IT_LAVA_SUPER_NAILGUN)
 				{
-					bprint("burned his ass\n", targ.netname, attacker.netname);
+					bprint("$qc_death_burned", targ.netname, attacker.netname);
 					return;
 				}
 				else if (rnum == IT_PLASMA_GUN)
 				{
-					bprint("got planed\n", targ.netname, attacker.netname);
+					bprint("$qc_death_fused", targ.netname, attacker.netname);
 					return;
 				}
 				else if (rnum == IT_MULTI_GRENADE || rnum == IT_MULTI_ROCKET)
 				{
-					bprint("busted his ass\n", targ.netname, attacker.netname);
+					bprint("$qc_death_blasted", targ.netname, attacker.netname);
 					return;
 				}
 			}
@@ -1948,54 +1948,54 @@ void(entity targ, entity attacker) ClientObituary =
 			if (attacker.flags & FL_MONSTER)
 			{
 				if (attacker.classname == "monster_army")
-					bprint ("GOT VASQED BY TRAFICANTE \n", targ.netname);
+					bprint ("$qc_ks_grunt", targ.netname);
 				if (attacker.classname == "monster_demon1")
-					bprint ("GOT VASQED BY CAPIVARA \n", targ.netname);
+					bprint ("$qc_ks_fiend", targ.netname);
 				if (attacker.classname == "monster_dog")
-					bprint ("GOT VASQED BY CARAMELO \n", targ.netname);
+					bprint ("$qc_ks_rottweiler", targ.netname);
 				if (attacker.classname == "monster_dragon")
 					bprint ("$qc_ks_dragon1", targ.netname);
 				if (attacker.classname == "monster_dragon_dead")
 					bprint ("$qc_ks_dragon2", targ.netname);
 				if (attacker.classname == "monster_enforcer")
-					bprint ("GOT VASQED BY FOFO \n", targ.netname);
+					bprint ("$qc_ks_enforcer", targ.netname);
 				if (attacker.classname == "monster_fish")
 					bprint ("$qc_ks_rotfish", targ.netname);
 				if (attacker.classname == "monster_hell_knight")
-					bprint ("GOT VASQED BY SERIE B", targ.netname);
+					bprint ("$qc_ks_deathknight", targ.netname);
 				if (attacker.classname == "monster_knight")
-					bprint ("GOT VASQED BY TORCEDOR MALUCO \n", targ.netname);
+					bprint ("$qc_ks_knight", targ.netname);
 				if (attacker.classname == "monster_ogre")
-					bprint ("GOT VASQED BY BRICK FLAFLA \n", targ.netname);
+					bprint ("$qc_ks_ogre", targ.netname);
 				if (attacker.classname == "monster_oldone")
-					bprint ("GOT VASQED BY DEMONIO \n", targ.netname);
+					bprint ("$qc_ks_shub", targ.netname);
 				if (attacker.classname == "monster_shalrath")
-					bprint ("GOT VASQED BY POSSESSED EDINHO \n", targ.netname);
+					bprint ("$qc_ks_vore", targ.netname);
 				if (attacker.classname == "monster_shambler")
-					bprint ("GOT VASQED BY DEMONINHO", targ.netname);
+					bprint ("$qc_ks_shambler", targ.netname);
 				if (attacker.classname == "monster_tarbaby")
-					bprint ("GOT VASQED BY FULEQUIN", targ.netname);
+					bprint ("$qc_ks_spawn", targ.netname);
 				if (attacker.classname == "monster_vomit")
 					bprint ("$qc_ks_vomitus", targ.netname);
 				if (attacker.classname == "monster_wizard")
-					bprint ("GOT VASQED BY LORO \n", targ.netname);
+					bprint ("$qc_ks_scrag", targ.netname);
 				if (attacker.classname == "monster_zombie")
-					bprint ("GOT VASQED BY CHEIRADOR \n", targ.netname);
+					bprint ("$qc_ks_zombie", targ.netname);
 
 				if (attacker.classname == "monster_eel")
 					bprint ("$qc_ks_eel", targ.netname);
 				if (attacker.classname == "monster_wrath")
-					bprint ("GOT VASQED BY JUMENTA \n", targ.netname);
+					bprint ("$qc_ks_wrath", targ.netname);
 				if (attacker.classname == "monster_super_wrath")
 					bprint ("$qc_ks_overlord", targ.netname);
 				if (attacker.classname == "monster_sword")
 					bprint ("$qc_ks_swordsman", targ.netname);
 				if (attacker.classname == "monster_lava_man")
-					bprint ("GOT VASQED BY VASQ CTHULLU", targ.netname);
+					bprint ("$qc_ks_hephaestus", targ.netname);
 				if (attacker.classname == "monster_morph")
 					bprint ("$qc_ks_guardian", targ.netname);
 				if (attacker.classname == "monster_mummy")
-					bprint ("GOT VASQED BY POSSESSED PERERE", targ.netname);
+					bprint ("$qc_ks_mummy", targ.netname);
 
 				return;
 			}
@@ -2003,34 +2003,34 @@ void(entity targ, entity attacker) ClientObituary =
 			// tricks and traps
 			if (attacker.classname == "explo_box")
 			{
-				bprint ("vasqed blown\n", targ.netname);
+				bprint ("$qc_ks_blew_up", targ.netname);
 				return;
 			}
 			if (attacker.solid == SOLID_BSP && attacker != world)
 			{	
-				bprint ("got squished\n", targ.netname);
+				bprint ("$qc_death_squish", targ.netname);
 				return;
 			}
 			if (attacker.classname == "trap_shooter" || attacker.classname == "trap_spikeshooter")
 			{
-				bprint ("got spiked\n", targ.netname);
+				bprint ("$qc_ks_spiked", targ.netname);
 				return;
 			}
 			if (attacker.classname == "fireball")
 			{
-				bprint ("got lavad\n", targ.netname);
+				bprint ("$qc_ks_lavaball", targ.netname);
 				return;
 			}
 			if (attacker.classname == "trigger_changelevel")
 			{
-				bprint ("tried leaving\n", targ.netname);
+				bprint ("$qc_ks_tried_leave", targ.netname);
 				return;
 			}
 
 			if (attacker.classname == "ltrail_start" || 
 				attacker.classname == "ltrail_relay")
 			{
-				bprint ("rode light\n", targ.netname);
+				bprint ("$qc_ks_rode_lightning", targ.netname);
 				return;
 			}
 			if (attacker.classname == "pendulum")
@@ -2045,14 +2045,14 @@ void(entity targ, entity attacker) ClientObituary =
 			}
 			if (attacker.classname == "plasma")
 			{
-				bprint ( "plasmad \n", targ.netname);
+				bprint ( "$qc_ks_plasma", targ.netname);
 				return;
 			}
 			if (attacker.classname == "Vengeance")
 			{
 				// vengeance sphere doesn't count as a negative frag
 				targ.frags = targ.frags + 1;
-				bprint ( "vengenanced\n", targ.netname);
+				bprint ( "$qc_death_vengeance", targ.netname);
 				return;
 			}
 			if (attacker.classname == "power_shield")
@@ -2063,7 +2063,7 @@ void(entity targ, entity attacker) ClientObituary =
 				attacker.owner.frags = attacker.owner.frags + 1;
 				TeamAssists(targ, attacker.owner);			//PGM
 
-				bprint("GOT SMACK THAT ALL ON THE FLOOR WHATS UP AKON \n", targ.netname, attacker.owner.netname);
+				bprint("$qc_death_smashed", targ.netname, attacker.owner.netname);
 				return;
 			}
 
@@ -2072,18 +2072,18 @@ void(entity targ, entity attacker) ClientObituary =
 			if (rnum == -3)
 			{
 				if (random() < 0.5)
-					bprint("WANTED TO BECOME AQUAMAN \n", targ.netname);
+					bprint("$qc_death_drown1", targ.netname);
 				else
-					bprint("WANTED TO BECOME AQUAMAN SERIOUSLY \n", targ.netname);
+					bprint("$qc_death_drown2", targ.netname);
 
 				return;
 			}
 			else if (rnum == -4)
 			{
 				if (random() < 0.5)
-					bprint("GOT SLIMED \n", targ.netname);
+					bprint("$qc_death_slime1", targ.netname);
 				else
-					bprint("GOT REALLY SLIMY \n", targ.netname);
+					bprint("$qc_death_slime2", targ.netname);
 
 				return;
 			}
@@ -2091,32 +2091,32 @@ void(entity targ, entity attacker) ClientObituary =
 			{
 				if (targ.health < -15)
 				{
-					bprint("SMELLED SOME LAVA \n", targ.netname);
+					bprint("$qc_death_lava1", targ.netname);
 					return;
 				}
 
 				if (random() < 0.5)
-					bprint("ATE SOME LAVA \n", targ.netname);
+					bprint("$qc_death_lava2", targ.netname);
 				else
-					bprint("SNIFFED SOME LAVA \n", targ.netname);
+					bprint("$qc_death_lava3", targ.netname);
 
 				return;
 			}
 
 			if (attacker.solid == SOLID_BSP && attacker != world)
 			{	
-				bprint("GOT VASQUICHED \n", targ.netname);
+				bprint("$qc_death_squish", targ.netname);
 				return;
 			}
 
 			if (targ.deathtype == "falling")
 			{
 				targ.deathtype = string_null;
-				bprint("fell to vasco \n", targ.netname);
+				bprint("$qc_death_fall", targ.netname);
 				return;
 			}
 
-			bprint("GOT VASQED \n", targ.netname);
+			bprint("$qc_death_died", targ.netname);
 		}
 	}
 };

@@ -1310,13 +1310,13 @@ void() W_ChangeWeapon =
 	
 	if (!(self.items & fl))
 	{	// don't have the weapon or the ammo
-		sprint (self, "got no weapon");
+		sprint (self, "$qc_no_weapon");
 		return;
 	}
 
 	if (am)
 	{	// don't have the ammo
-		sprint (self, "not enough ammo");
+		sprint (self, "$qc_not_enough_ammo");
 		return;
 	}
 	
@@ -1327,38 +1327,38 @@ void() W_ChangeWeapon =
 				self.weapon == IT_LAVA_SUPER_NAILGUN)
 		{
 			if (fl == IT_NAILGUN || fl == IT_SUPER_NAILGUN)
-				sprint (self, "MAC 10 45 OR GOLDEN PISTOL DUNNO WHO CARES NABLED\n");
+				sprint (self, "$qc_normal_nails");
 		}
 		else if (self.weapon == IT_MULTI_GRENADE)
 		{
 			if (fl == IT_GRENADE_LAUNCHER)
-				sprint (self, "granadinhas \n");
+				sprint (self, "$qc_normal_nails");
 		}
 		else if (self.weapon == IT_MULTI_ROCKET)
 		{
 			if (fl == IT_ROCKET_LAUNCHER)
-				sprint (self, "rockets \n");
+				sprint (self, "$qc_normal_rockets");
 		}
 		else if (self.weapon == IT_AVIAO)
 		{
 			if (fl == IT_LIGHTNING)
-				sprint (self, "fab snake \n");
+				sprint (self, "$qc_lightning_gun");
 		}
 		else if (fl == IT_LAVA_NAILGUN || fl == IT_LAVA_SUPER_NAILGUN)
 		{
-			sprint (self, "GEL GUN IA2 OR GOLLY GEL GUN DUNNO WHO CARES ENABLED \n");
+			sprint (self, "$qc_lava_nails");
 		}
 		else if(fl == IT_MULTI_GRENADE)
 		{
-			sprint (self, "berimbau \n");
+			sprint (self, "$qc_multi_gl");
 		}
 		else if(fl == IT_MULTI_ROCKET)
 		{
-			sprint (self, "ORELHAO DA TCHAU \n");
+			sprint (self, "$qc_multi_rl");
 		}
 		else if(fl == IT_AVIAO)
 		{
-			sprint (self, "aviao eletrico \n");
+			sprint (self, "$qc_plasma_gun");
 		}
 	}
 	

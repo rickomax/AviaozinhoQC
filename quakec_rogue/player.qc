@@ -645,6 +645,7 @@ void() PlayerDie =
 	self.gravity = 1.0;
 	self.shield_finished = 0;
 	self.antigrav_finished = 0;
+        unlock_achievement("FUI_DE_VASQ");
 
 //ZOID--
 	if (deathmatch || coop)

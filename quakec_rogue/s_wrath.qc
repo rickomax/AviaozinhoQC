@@ -317,7 +317,7 @@ void() overlord_smash =
 	if (vlen(delta) > 100)
 		return;
 
-	smashDmg = 20 + random () * 10;
+	smashDmg = 3 + random () * 10;
 	
 	sound (self, CHAN_WEAPON, "s_wrath/smash.wav", 1, ATTN_NORM);
     T_Damage (self.enemy, self, self, smashDmg);
@@ -548,7 +548,7 @@ void() monster_super_wrath =
 
 	setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
 
-	self.health = 1000;
+	self.health = 230;
 	self.pain_finished = 0;
 	
 //    if(self.spawnflags & 2)

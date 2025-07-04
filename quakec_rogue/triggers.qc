@@ -221,7 +221,7 @@ void() trigger_secret =
 	total_secrets = total_secrets + 1;
 	self.wait = -1;
 	if (!self.message)
-		self.message = "You found a secret parabains \n";
+		self.message = "$qc_found_secret";
 	if (!self.sounds)
 		self.sounds = 1;
 	
@@ -256,20 +256,20 @@ void() counter_use =
 		&& (self.spawnflags & SPAWNFLAG_NOMESSAGE) == 0)
 		{
 			if (self.count >= 4)
-				centerprint (activator, "more to to go");
+				centerprint (activator, "$qc_more_go");
 			else if (self.count == 3)
-				centerprint (activator, "three more");
+				centerprint (activator, "$qc_three_more");
 			else if (self.count == 2)
-				centerprint (activator, "two more");
+				centerprint (activator, "$qc_two_more");
 			else
-				centerprint (activator, "one more");
+				centerprint (activator, "$qc_one_more");
 		}
 		return;
 	}
 	
 	if (activator.classname == "player"
 	&& (self.spawnflags & SPAWNFLAG_NOMESSAGE) == 0)
-		centerprint(activator, "YOU GOT THE SEQUENCE PARABAINS");
+		centerprint(activator, "$qc_sequence_completed");
 	self.enemy = activator;
 	multi_trigger ();
 };
@@ -549,10 +549,10 @@ void() trigger_onlyregistered_touch =
 	else
 	{
 		if (self.message != "")
-	    {
-	        centerprint(other, self.message);
-	        sound(other, CHAN_BODY, "misc/talk.wav", 1, ATTN_NORM);
-	    }
+		{
+			centerprint (other, self.message);
+			sound (other, CHAN_BODY, "misc/talk.wav", 1, ATTN_NORM);
+		}
 	}
 };
 

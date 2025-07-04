@@ -81,7 +81,7 @@ void(float ox) W_FireLavaSpikes =
 
 	if (self.ammo_lava_nails < 1)
 	{
-		sprint (self, "outta gels");
+		sprint (self, "$qc_out_lava_nails");
 		self.weapon = W_BestWeapon ();
 		W_SetCurrentAmmo ();
 		return;

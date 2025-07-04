@@ -255,16 +255,19 @@ void() SUB_UseTargets =
 	{
 		// -----------------------------------------------------------------------------------
 		// AVIÃOZINHO
-		// CHECA SE A MENSAGEM É PARA HABILITAR UM ACHIEVEMENT
 		// -----------------------------------------------------------------------------------
 	    if (strncmp(self.message, "unlock_achievement(", 19) == 0)
 	    {
             string achievement_name = substring(self.message, 19, strlen(self.message) - 20);
             unlock_achievement(achievement_name);
-	    } else {
-			// -----------------------------------------------------------------------------------
-		    // NÃO É :C
-			// -----------------------------------------------------------------------------------
+	    } 
+		else if (strncmp(self.message, "quick_save(", 11) == 0)
+	    {
+        	stuffcmd(activator, "save quick\n");
+        	centerprint(activator, "$gamesaved");
+	    } 
+	    else 
+	    {
 	        stuffcmd(activator, "scr_centertime 7");
 			centerprint (activator, self.message);
 			if (!self.noise)

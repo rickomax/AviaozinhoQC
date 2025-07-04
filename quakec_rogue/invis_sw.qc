@@ -7,8 +7,8 @@
 
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
-    for more details.
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
@@ -66,7 +66,7 @@ $frame deathb9 deathb10 deathb11
 
 void() sword_stand1 = [ $stand1, sword_stand1 ] { ai_stand(); };
 
-// Menor delay entre as transições de movimento
+// AVIÃOZINHO: SMALLER DELAY BETWEEN MOVEMENT TRANSITIONS
 void() sword_run1 = [ $runb1, sword_run2 ] { ai_run(14); };
 void() sword_run2 = [ $runb2, sword_run3 ] { ai_run(14); };
 void() sword_run3 = [ $runb3, sword_run4 ] { ai_run(14); };
@@ -168,6 +168,7 @@ void() monster_sword =
     }
 
     precache_model("progs/sword.mdl");
+    precache_model("progs/h_guard.mdl");
 
     precache_sound("knight/sword1.wav");
     precache_sound("knight/ksight.wav");
@@ -179,10 +180,10 @@ void() monster_sword =
     setmodel(self, "progs/sword.mdl");
 
     setsize(self, '-16 -16 -24', '16 16 40');
-    self.health = 25;  // Ajustado para 25 de vida, como solicitado
+    self.health = 25;  // Adjusted to 25 health as requested
 
     if (!self.delay)
-        self.delay = 0.1;  // Delay ajustado para 0.1 para que a detecção seja quase instantânea
+        self.delay = 0.1;  // Delay set to 0.1 so detection is almost instantaneous
 
     self.th_stand = sword_stand1;
     self.th_walk = sword_stand1;

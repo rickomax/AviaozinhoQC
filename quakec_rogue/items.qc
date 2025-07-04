@@ -189,7 +189,7 @@ void() health_touch =
 			return;
 	}
 	
-	sprint(other, "Ate some pastel and caldo de cana\n", ftos(self.healamount));
+	sprint(other, "$qc_item_health", ftos(self.healamount));
 	
 // health touch sound
 	sound(other, CHAN_ITEM, self.noise, 1, ATTN_NORM);
@@ -294,7 +294,7 @@ void() armor_touch =
 		self.nextthink = time + 20;
 	self.think = SUB_regen;
 
-	sprint(other, "GOT SOME ARMOR COLETE \n");
+	sprint(other, "$qc_item_armor");
 // armor touch sound
 	sound(other, CHAN_ITEM, "items/armor1.wav", 1, ATTN_NORM);
 	stuffcmd (other, "bf\n");
@@ -442,7 +442,7 @@ void(entity comboOwner) EnableComboWeapons =
     {
         if (comboOwner.ammo_lava_nails > 0 && (comboOwner.items & IT_NAILGUN))
         {
-            sprint (comboOwner, "GOLLY GEL GUN ENABLED \n");
+            sprint (comboOwner, "$qc_lava_enabled");
             comboOwner.items = comboOwner.items | IT_LAVA_NAILGUN;
         }
     }
@@ -452,7 +452,7 @@ void(entity comboOwner) EnableComboWeapons =
         if (comboOwner.ammo_lava_nails > 0 && 
                             (comboOwner.items & IT_SUPER_NAILGUN))
         {
-            sprint (comboOwner, "IA2 DE GEL ENABLED \n");
+            sprint (comboOwner, "$qc_super_lava_enabled");
             comboOwner.items = comboOwner.items | IT_LAVA_SUPER_NAILGUN;        
         }
     }
@@ -462,7 +462,7 @@ void(entity comboOwner) EnableComboWeapons =
         if (comboOwner.ammo_multi_rockets > 0 && 
                             (comboOwner.items & IT_GRENADE_LAUNCHER))
         {
-            sprint (comboOwner, "Berimbau enabled \n");
+            sprint (comboOwner, "$qc_multi_gl_enabled");
             comboOwner.items = comboOwner.items | IT_MULTI_GRENADE;        
         }
     }
@@ -472,7 +472,7 @@ void(entity comboOwner) EnableComboWeapons =
         if (comboOwner.ammo_multi_rockets > 0 && 
                             (comboOwner.items & IT_ROCKET_LAUNCHER))
         {
-            sprint (comboOwner, "ORELHAO DA TCHAU enabled \n");
+            sprint (comboOwner, "$qc_multi_rl_enabled");
             comboOwner.items = comboOwner.items | IT_MULTI_ROCKET;        
         }
     }
@@ -481,12 +481,17 @@ void(entity comboOwner) EnableComboWeapons =
     {
         if (comboOwner.ammo_plasma > 0 && (comboOwner.items & IT_LIGHTNING))
         {
-            sprint (comboOwner, "aviaozinho eletrico enabled \n");
+            sprint (comboOwner, "$qc_plasma_enabled");
             comboOwner.items = comboOwner.items | IT_AVIAO;        
         }
     }
 };
 
+/*
+=============
+weapon_touch
+=============
+*/
 float() W_BestWeapon;
 float(entity playerEnt, float old, float new) W_WantsToChangeWeapon;
 
@@ -571,7 +576,7 @@ void() weapon_touch =
     else
         objerror ("weapon_touch: unknown classname");
 
-        sprint(other, "YOU GOT ITEM ");
+        sprint(other, "$qc_got_item");
         sprint(other, self.netname);
         sprint(other, "\n");
 
@@ -662,7 +667,7 @@ void() weapon_supershotgun =
     precache_model ("progs/g_shot.mdl");
     setmodel (self, "progs/g_shot.mdl");
     self.weapon = IT_SUPER_SHOTGUN;
-    self.netname = "DOUBLE GOLDEN SHOTGUN";
+    self.netname = "$qc_double_shotgun";
     self.touch = weapon_touch;
     setsize (self, '-16 -16 0', '16 16 56');
     StartItem ();
@@ -676,7 +681,7 @@ void() weapon_nailgun =
     precache_model ("progs/g_nail.mdl");
     setmodel (self, "progs/g_nail.mdl");
     self.weapon = IT_NAILGUN;
-    self.netname = "double golden pistol";
+    self.netname = "$qc_nailgun";
     self.touch = weapon_touch;
     setsize (self, '-16 -16 0', '16 16 56');
     StartItem ();
@@ -690,7 +695,7 @@ void() weapon_supernailgun =
     precache_model ("progs/g_nail2.mdl");
     setmodel (self, "progs/g_nail2.mdl");
     self.weapon = IT_SUPER_NAILGUN;
-    self.netname = "mac 10 47";
+    self.netname = "$qc_super_nailgun";
     self.touch = weapon_touch;
     setsize (self, '-16 -16 0', '16 16 56');
     StartItem ();
@@ -704,7 +709,7 @@ void() weapon_grenadelauncher =
     precache_model ("progs/g_rock.mdl");
     setmodel (self, "progs/g_rock.mdl");
     self.weapon = IT_GRENADE_LAUNCHER;
-    self.netname = "broken golden rocket launcher that shoots grenades";
+    self.netname = "$qc_grenade_launcher";
     self.touch = weapon_touch;
     setsize (self, '-16 -16 0', '16 16 56');
     StartItem ();
@@ -718,7 +723,7 @@ void() weapon_rocketlauncher =
 	precache_model ("progs/g_rock2.mdl");
 	setmodel (self, "progs/g_rock2.mdl");
 	self.weapon = IT_ROCKET_LAUNCHER;
-	self.netname = "fla rocket launcher";
+	self.netname = "$qc_rocket_launcher";
 	self.touch = weapon_touch;
 	setsize (self, '-16 -16 0', '16 16 56');
 	StartItem ();
@@ -733,7 +738,7 @@ void() weapon_lightning =
 	precache_model ("progs/g_light.mdl");
 	setmodel (self, "progs/g_light.mdl");
 	self.weapon = IT_LIGHTNING;
-	self.netname = "FAB Smoking Snake";
+	self.netname = "$qc_thunderbolt";
 	self.touch = weapon_touch;
 	setsize (self, '-16 -16 0', '16 16 56');
 	StartItem ();
@@ -828,7 +833,7 @@ local float		best;
 	
 	bound_other_ammo ();
 	
-	sprint(other, "YOU GOT ITEM ");
+	sprint(other, "$qc_got_item");
         sprint(other, self.netname);
         sprint(other, "\n");
 
@@ -897,7 +902,7 @@ void() item_shells =
 		self.aflag = 20;
 	}
 	self.weapon = 1;
-	self.netname = "shells";
+	self.netname = "$qc_shells";
 	setsize (self, '0 0 0', '32 32 56');
 	StartItem ();
 };
@@ -923,7 +928,7 @@ void() item_spikes =
 		self.aflag = 25;
 	}
 	self.weapon = 2;
-	self.netname = "bullets";
+	self.netname = "$qc_nails";
 	setsize (self, '0 0 0', '32 32 56');
 	StartItem ();
 };
@@ -949,7 +954,7 @@ void() item_lava_spikes =
 		self.aflag = 25;
 	}
 	self.weapon = 5;
-	self.netname = "gel n coco n golly guarana";
+	self.netname = "$qc_lava_nails";
 	setsize (self, '0 0 0', '32 32 56');
 	StartItem ();
 };
@@ -975,7 +980,7 @@ void() item_rockets =
 		self.aflag = 5;
 	}
 	self.weapon = 3;
-	self.netname = "rockets";
+	self.netname = "$qc_rockets";
 	setsize (self, '0 0 0', '32 32 56');
 	StartItem ();
 };
@@ -1001,7 +1006,7 @@ void() item_multi_rockets =
 		self.aflag = 5;
 	}
 	self.weapon = 6;
-	self.netname = "cocos";
+	self.netname = "$qc_multi_rockets";
 	setsize (self, '0 0 0', '32 32 56');
 	StartItem ();
 };
@@ -1027,7 +1032,7 @@ void() item_cells =
 		self.aflag = 6;
 	}
 	self.weapon = 4;
-	self.netname = "weird ass ammo";
+	self.netname = "$qc_cells";
 	setsize (self, '0 0 0', '32 32 56');
 	StartItem ();
 };
@@ -1052,7 +1057,7 @@ void() item_plasma =
 		self.aflag = 6;
 	}
 	self.weapon = 7;
-	self.netname = "plasma";
+	self.netname = "$qc_plasma";
 	setsize (self, '0 0 0', '32 32 56');
 	StartItem ();
 };
@@ -1085,7 +1090,7 @@ void() item_weapon =
 			self.aflag = 20;
 		}
 		self.weapon = 1;
-		self.netname = "shells";
+		self.netname = "$qc_shells";
 	}
 
 	if (self.spawnflags & WEAPON_SPIKES)
@@ -1103,7 +1108,7 @@ void() item_weapon =
 			self.aflag = 20;
 		}
 		self.weapon = 2;
-		self.netname = "bullets";
+		self.netname = "$qc_nails";
 	}
 
 	if (self.spawnflags & WEAPON_ROCKET)
@@ -1121,7 +1126,7 @@ void() item_weapon =
 			self.aflag = 5;
 		}
 		self.weapon = 3;
-		self.netname = "rockets";
+		self.netname = "$qc_rockets";
 	}
 	
 	setsize (self, '0 0 0', '32 32 56');
@@ -1149,7 +1154,7 @@ local float		best;
 	if (other.items & self.items)
 		return;
 
-		sprint(other, "YOU GOT ITEM ");
+		sprint(other, "$qc_got_item");
                 sprint(other, self.netname);
                 sprint(other, "\n");
 
@@ -1205,19 +1210,19 @@ void() item_key1 =
 	{
 		precache_model ("progs/w_s_key.mdl");
 		setmodel (self, "progs/w_s_key.mdl");
-		self.netname = "Silver Key \n";
+		self.netname = "$qc_silver_key";
 	}
 	else if (world.worldtype == 1)
 	{
 		precache_model ("progs/m_s_key.mdl");
 		setmodel (self, "progs/m_s_key.mdl");
-		self.netname = "Silver Runekey \n";
+		self.netname = "$qc_silver_runekey";
 	}
 	else if (world.worldtype == 2)
 	{
 		precache_model2 ("progs/b_s_key.mdl");
 		setmodel (self, "progs/b_s_key.mdl");
-		self.netname = "Silver Keycard \n";
+		self.netname = "$qc_silver_keycard";
 	}
 	key_setsounds();
 	self.touch = key_touch;
@@ -1243,19 +1248,19 @@ void() item_key2 =
 	{
 		precache_model ("progs/w_g_key.mdl");
 		setmodel (self, "progs/w_g_key.mdl");
-		self.netname = "Gold Key \n";
+		self.netname = "$qc_gold_key";
 	}
 	if (world.worldtype == 1)
 	{
 		precache_model ("progs/m_g_key.mdl");
 		setmodel (self, "progs/m_g_key.mdl");
-		self.netname = "Gold Runekey \n";
+		self.netname = "$qc_gold_runekey";
 	}
 	if (world.worldtype == 2)
 	{
 		precache_model2 ("progs/b_g_key.mdl");
 		setmodel (self, "progs/b_g_key.mdl");
-		self.netname = "Gold Keycard \n";
+		self.netname = "$qc_gold_keycard";
 	}
 	key_setsounds();
 	self.touch = key_touch;
@@ -1284,7 +1289,7 @@ local float		best;
 	if (other.health <= 0)
 		return;
 
-	centerprint(other, "GOT THE RUNE");
+	centerprint(other, "$qc_got_rune");
 
 	sound (other, CHAN_ITEM, self.noise, 1, ATTN_NORM);
 	stuffcmd (other, "bf\n");
@@ -1357,7 +1362,7 @@ local float		best;
 	if (other.health <= 0)
 		return;
 
-		sprint(other, "YOU GOT ITEM ");
+		sprint(other, "$qc_got_item");
                 sprint(other, self.netname);
                 sprint(other, "\n");
 
@@ -1391,28 +1396,28 @@ local float		best;
 
 // do the apropriate action
 //	if (self.classname == "item_artifact_envirosuit")
-	if (self.netname == "biosuit massa bixo \n")
+	if (self.netname == "$qc_biosuit")
 	{
 		other.rad_time = 1;
 		other.radsuit_finished = time + 30;
 	}
 	
 //	if (self.classname == "item_artifact_invulnerability")
-	if (self.netname == "Boladao Invencivel \n")
+	if (self.netname == "$qc_pentagram_of_protection")
 	{
 		other.invincible_time = 1;
 		other.invincible_finished = time + 30;
 	}
 	
 //	if (self.classname == "item_artifact_invisibility")
-	if (self.netname == "escondidinho hidden \n")
+	if (self.netname == "$qc_ring_of_shadows")
 	{
 		other.invisible_time = 1;
 		other.invisible_finished = time + 30;
 	}
 
 //	if (self.classname == "item_artifact_super_damage")
-	if (self.netname == "Source Code \n")
+	if (self.netname == "$qc_quad_damage")
 	{
 		other.super_time = 1;
 		other.super_damage_finished = time + 30;
@@ -1437,7 +1442,7 @@ void() item_artifact_invulnerability =
 	precache_sound ("items/protect3.wav");
 	self.noise = "items/protect.wav";
 	setmodel (self, "progs/invulner.mdl");
-	self.netname = "Boladao Invencivel \n";
+	self.netname = "$qc_pentagram_of_protection";
 	self.items = IT_INVULNERABILITY;
 	setsize (self, '-16 -16 -24', '16 16 32');
 	StartItem ();
@@ -1455,7 +1460,7 @@ void() item_artifact_envirosuit =
 	precache_sound ("items/suit2.wav");
 	self.noise = "items/suit.wav";
 	setmodel (self, "progs/suit.mdl");
-	self.netname = "biosuit massa bixo \n";
+	self.netname = "$qc_biosuit";
 	self.items = IT_SUIT;
 	setsize (self, '-16 -16 -24', '16 16 32');
 	StartItem ();
@@ -1475,7 +1480,7 @@ void() item_artifact_invisibility =
 	precache_sound ("items/inv3.wav");
 	self.noise = "items/inv1.wav";
 	setmodel (self, "progs/invisibl.mdl");
-	self.netname = "escondidinho hidden \n";
+	self.netname = "$qc_ring_of_shadows";
 	self.items = IT_INVISIBILITY;
 	setsize (self, '-16 -16 -24', '16 16 32');
 	StartItem ();
@@ -1495,7 +1500,7 @@ void() item_artifact_super_damage =
 	precache_sound ("items/damage3.wav");
 	self.noise = "items/damage.wav";
 	setmodel (self, "progs/quaddama.mdl");
-	self.netname = "Source Code \n";
+	self.netname = "$qc_quad_damage";
 	self.items = IT_QUAD;
 	setsize (self, '-16 -16 -24', '16 16 32');
 	StartItem ();
@@ -1529,7 +1534,7 @@ void() BackpackTouch =
 //--ZOID
 
 	acount = 0;
- 	sprint(other, "You get ");
+ 	sprint(other, "$qc_backpack_got");
 
 	if (self.items)
 	{	
@@ -1573,7 +1578,7 @@ void() BackpackTouch =
 			sprint(other, ", ");	
 
 		acount = 1;
-		sprint(other, "some shells\n", ftos(self.ammo_shells1));
+		sprint(other, "$qc_backpack_shells", ftos(self.ammo_shells1));
 	}
 	if (self.ammo_nails1)
 	{
@@ -1581,7 +1586,7 @@ void() BackpackTouch =
 			sprint(other, ", ");
 
 		acount = 1;
-		sprint(other, "bullets\n", ftos(self.ammo_nails1));
+		sprint(other, "$qc_backpack_nails", ftos(self.ammo_nails1));
 	}
 	if (self.ammo_rockets1)
 	{
@@ -1589,7 +1594,7 @@ void() BackpackTouch =
 			sprint(other, ", ");
 
 		acount = 1;
-		sprint(other, "rockets\n", ftos(self.ammo_rockets1));
+		sprint(other, "$qc_backpack_rockets", ftos(self.ammo_rockets1));
 	}
 	if (self.ammo_cells1)
 	{
@@ -1597,7 +1602,7 @@ void() BackpackTouch =
 			sprint(other, ", ");
 
 		acount = 1;
-		sprint(other, "weird ass ammo\n", ftos(self.ammo_cells1));
+		sprint(other, "$qc_backpack_cells", ftos(self.ammo_cells1));
 	}
 	if (self.ammo_lava_nails)
 	{
@@ -1605,7 +1610,7 @@ void() BackpackTouch =
 			sprint(other, ", ");
 
 		acount = 1;
-		sprint(other, "gel n golly\n", ftos(self.ammo_lava_nails));
+		sprint(other, "$qc_backpack_lava_nail", ftos(self.ammo_lava_nails));
 	}
 	if (self.ammo_multi_rockets)
 	{
@@ -1613,7 +1618,7 @@ void() BackpackTouch =
 			sprint(other, ", ");
 
 		acount = 1;
-		sprint(other, "rockets \n", ftos(self.ammo_multi_rockets));
+		sprint(other, "$qc_backpack_multi_rockets", ftos(self.ammo_multi_rockets));
 	}
 	if (self.ammo_plasma)
 	{
@@ -1621,7 +1626,7 @@ void() BackpackTouch =
 			sprint(other, ", ");
 
 		acount = 1;
-		sprint(other, "aviaozinho eletrico\n", ftos(self.ammo_plasma));
+		sprint(other, "$qc_backpack_plasma_balls", ftos(self.ammo_plasma));
 	}
 	
 	sprint (other, "\n");
@@ -1683,34 +1688,34 @@ void() DropBackpack =
 	item.classname = "item_backpack"; // added for bots.
 
 	if (item.items == IT_AXE)
-		item.netname = "knife";
+		item.netname = "$qc_axe";
 	else if (item.items == IT_SHOTGUN)
-		item.netname = "golden shotgun";
+		item.netname = "$qc_shotgun";
 	else if (item.items == IT_SUPER_SHOTGUN)
-		item.netname = "double golden shotgun";
+		item.netname = "$qc_double_shotgun";
 	else if (item.items == IT_NAILGUN)
-		item.netname = "golden glock";
+		item.netname = "$qc_nailgun";
 	else if (item.items == IT_SUPER_NAILGUN)
-		item.netname = "mac 10";
+		item.netname = "$qc_super_nailgun";
 	else if (item.items == IT_GRENADE_LAUNCHER)
-		item.netname = "broken rocket launcher that shoots grenades";
+		item.netname = "$qc_grenade_launcher";
 	else if (item.items == IT_ROCKET_LAUNCHER)
-		item.netname = "rocket launcher";
+		item.netname = "$qc_rocket_launcher";
 	else if (item.items == IT_LIGHTNING)
-		item.netname = "FAB Snake";	
+		item.netname = "$qc_thunderbolt";	
 	else if (item.items == IT_LAVA_NAILGUN)
 	{
-		item.netname = "gel n golly guarana gun";	
+		item.netname = "$qc_got_lava_nailgun";	
 		item.items = IT_NAILGUN;
 	}
 	else if (item.items == IT_LAVA_SUPER_NAILGUN)
 	{
-		item.netname = "gel n golly guarana gun";	
+		item.netname = "$qc_got_super_lava_nailgun";	
 		item.items = IT_SUPER_NAILGUN;
 	}
 	else if (item.items == IT_MULTI_GRENADE)
 	{
-		item.netname = "berimbau";	
+		item.netname = "$qc_got_multi_gl";	
 		item.items = IT_GRENADE_LAUNCHER;
 	}
 	else if (item.items == IT_MULTI_ROCKET)
@@ -1720,7 +1725,7 @@ void() DropBackpack =
 	}
 	else if (item.items == IT_AVIAO)
 	{
-		item.netname = "aviaozinho eletrico";	
+		item.netname = "$qc_got_plasma_gun";	
 		item.items = IT_LIGHTNING;
 	}
 	else

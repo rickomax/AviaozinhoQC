@@ -53,7 +53,7 @@ void() newitems_touch =
 		if (other.items2 & IT2_V_SPHERE)
 			return;
 
-	sprint(other, "you got item ", self.netname);
+	sprint(other, "$qc_got_item", self.netname);
 
 	if (deathmatch)
 	{

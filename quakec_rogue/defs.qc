@@ -904,3 +904,7 @@ string(string info, string key) infoget = #227;
 float(string s1, string s2, float len) strncmp = #228;
 float(string s1, string s2) strcasecmp = #229;
 float(string s1, string s2, float len) strncasecmp = #230;
+
+.float buttonuse;
+.float using;
+.void() useractivate;

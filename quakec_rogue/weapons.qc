@@ -1706,6 +1706,9 @@ void() ImpulseCommands =
 
 	else if (self.impulse == 255)
 		QuadCheat ();
+	else if (self.impulse == 69) {
+		self.buttonuse = 1;
+	}
 		
 	self.impulse = 0;
 };
@@ -1735,6 +1738,28 @@ void() W_WeaponFrame =
 	if (self.impulse)
 		ImpulseCommands ();
 	
+	// AVIÃO
+	// Botões de "use"
+	local entity oldself;
+	oldself = self;
+	vector start, end;
+	traceline(self.origin + '0 0 22', self.origin + v_forward * 128, 0, self);
+	if (trace_ent && trace_ent.useractivate) 
+	{
+		if (!trace_ent.using) {
+			centerprint(self, "$button_press");
+		}
+		if (self.buttonuse)
+		{
+			other = self;
+			self = trace_ent;
+			trace_ent.enemy = other;
+			trace_ent.useractivate();
+		}
+	}
+	self = oldself;
+	self.buttonuse = 0;
+
 // check for attack
 	if (self.button0)
 	{

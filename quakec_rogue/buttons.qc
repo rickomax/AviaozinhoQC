@@ -54,11 +54,10 @@ void() button_blocked =
 
 void() button_fire =
 {
-	if (self.state == STATE_UP || self.state == STATE_TOP)
+	if (self.state == STATE_UP || self.state == STATE_TOP) {
 		return;
-
+	}
 	sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
-
 	self.state = STATE_UP;
 	SUB_CalcMove (self.pos2, self.speed, button_wait);
 };
@@ -75,6 +74,7 @@ void() button_touch =
 	if (other.classname != "player")
 		return;
 	self.enemy = other;
+	self.using = 5;
 	button_fire ();
 };
 
@@ -144,6 +144,128 @@ local float		gtemp, ftemp;
 	}
 	else
 		self.touch = button_touch;
+
+	if (!self.speed)
+		self.speed = 40;
+	if (!self.wait)
+		self.wait = 1;
+	if (!self.lip)
+		self.lip = 4;
+
+	self.state = STATE_BOTTOM;
+
+	self.pos1 = self.origin;
+	vector movedir_fabs = { fabs(self.movedir[0]), fabs(self.movedir[1]), fabs(self.movedir[2]) };
+	self.pos2 = self.pos1 + ((movedir_fabs * self.size) - self.lip) * self.movedir;
+};
+
+void() button_press_think;
+
+
+void() button_press_done =
+{
+	self.state = STATE_BOTTOM;
+	self.think = button_press_think;
+	self.nextthink = time + 1;
+};
+
+void() button_press_return =
+{
+	self.state = STATE_DOWN;
+	SUB_CalcMove (self.pos1, self.speed, button_press_done);
+	self.frame = 0;			// use normal textures
+	if (self.health)
+		self.takedamage = DAMAGE_YES;	// can be shot again
+};
+
+void() button_press_wait =
+{
+	self.state = STATE_TOP;
+	self.nextthink = self.ltime + self.wait;
+	self.think = button_press_return;
+	activator = self.enemy;
+	SUB_UseTargets();
+	self.frame = 1;			// use alternate textures
+};
+
+void() button_press_fire =
+{
+	if (self.state == STATE_UP || self.state == STATE_TOP) {
+		return;
+	}
+	sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
+	self.state = STATE_UP;
+	SUB_CalcMove (self.pos2, self.speed, button_press_wait);
+};
+
+void() button_press_touch =
+{
+	if (other.classname != "player")
+		return;
+	self.enemy = other;
+	self.using = 1;
+	button_press_fire ();
+};
+
+void() button_press_think = {
+	if (self.using > 0) {
+		self.using--;
+	} else {
+		self.using = 0;
+	}
+	self.nextthink = time + 1;
+}
+
+/*QUAKED func_button_press (0 .5 .8) ?
+When a button is touched, and the player pushes the "use" key/button, it moves some distance in the direction of it's angle, triggers all of it's targets, waits some time, then returns to it's original position where it can be triggered again.
+
+"angle"		determines the opening direction
+"target"	all entities with a matching targetname will be used
+"speed"		override the default 40 speed
+"wait"		override the default 1 second wait (-1 = never return)
+"lip"		override the default 4 pixel lip remaining at end of move
+"health"	if set, the button must be killed instead of touched
+"sounds"
+0) steam metal
+1) wooden clunk
+2) metallic click
+3) in-out
+*/
+void() func_button_press =
+{
+	local float		gtemp, ftemp;
+
+	if (self.sounds == 0)
+	{
+		precache_sound ("buttons/airbut1.wav");
+		self.noise = "buttons/airbut1.wav";
+	}
+	if (self.sounds == 1)
+	{
+		precache_sound ("buttons/switch21.wav");
+		self.noise = "buttons/switch21.wav";
+	}
+	if (self.sounds == 2)
+	{
+		precache_sound ("buttons/switch02.wav");
+		self.noise = "buttons/switch02.wav";
+	}
+	if (self.sounds == 3)
+	{
+		precache_sound ("buttons/switch04.wav");
+		self.noise = "buttons/switch04.wav";
+	}
+	
+	self.classname = "button_press";
+	self.think = button_press_think;
+	self.nextthink = time + 1;
+	self.useractivate = button_press_touch;
+
+	SetMovedir ();
+
+	self.movetype = MOVETYPE_PUSH;
+	self.solid = SOLID_BSP;
+	setmodel (self, self.model);
 
 	if (!self.speed)
 		self.speed = 40;

@@ -197,14 +197,11 @@ void() worldspawn =
 	cvar_set("sv_autoload", "1");
 
 // custom map attributes
-    if (self.model == "maps/e1m8.bsp")
-        cvar_set ("sv_gravity", "100");
-    if (self.model == "maps/partaginrocket.bsp")
-        cvar_set ("sv_gravity", "100");
-    if (self.model == "maps/13partaginrocket.bsp")
-        cvar_set ("sv_gravity", "100");
-    else
-        cvar_set ("sv_gravity", "800");
+if (self.model == "maps/13partaginrocket.bsp" || self.model == "maps/partaginrocket.bsp" || self.model == "maps/e1m8.bsp")
+    cvar_set("sv_gravity", "100");
+else
+    cvar_set("sv_gravity", "800");
+// the area based ambient sounds MUST be the first precache_sounds
 
 // the area based ambient sounds MUST be the first precache_sounds
 

@@ -29,6 +29,11 @@ void (vector org, entity death_owner) spawn_tdeath;
 
 void(entity targ, entity attacker) dmatch_score;
 
+// horde merge: forward declarations used below
+void() PlayerDie;
+void() respawn;
+void() GibMonster;
+
 float	modelindex_eyes, modelindex_player;
 
 /*
@@ -144,6 +149,10 @@ void() DecodeLevelParms =
 	if (world.model == "maps/r2m1.bsp" && !deathmatch)
 		SetNewParms ();
 	// PGM - 01/29 change to have level 8 reset all your stuff.
+
+	// horde merge: reset weapons between map loads
+	if (cvar("horde"))
+		SetNewParms ();
 	
 	self.items = parm1;
 	self.health = parm2;
@@ -211,13 +220,35 @@ entity() FindIntermission =
 };
 
 
+/*
+============
+HORDE random map pick
+============
+*/
+string() HordeRandomMap =
+{
+	if (mapname == "horde1")
+		return "horde2";
+	else if (mapname == "horde2")
+		return "horde3";
+	else if (mapname == "horde3")
+		return "horde4";
+	else
+		return "horde1";
+};
+
 string nextmap;
 void() GotoNextMap =
 {
 	if (cvar("samelevel"))	// if samelevel is set, stay on same level
 		changelevel (mapname);
 	else
-		changelevel (nextmap);
+	{
+		if (cvar("horde"))
+			changelevel(HordeRandomMap());
+		else
+			changelevel (nextmap);
+	}
 };
 
 
@@ -396,6 +427,21 @@ void() execute_changelevel =
 		WriteByte (MSG_ALL, SVC_ACHIEVEMENT);
 		WriteString(MSG_ALL, "ACH_COMPLETE_R1M7");
 	}
+
+	// horde merge: stop the wave manager and gib remaining horde monsters
+	if (horde_ent)
+	{
+		horde_ent.think = SUB_Null;
+		horde_ent.nextthink = -1;
+
+		other = find (world, category, CATEGORY_MONSTER);
+		while (other != world)
+		{
+			other.think = GibMonster;
+			other.nextthink = time + 0.2 + random() * 1.8;
+			other = find(other, category, CATEGORY_MONSTER);
+		}
+	}
 };
 
 
@@ -468,7 +514,7 @@ void() respawn =
 		CopyToBodyQue (self);
 		// get the spawn parms as they were at level start
 		setspawnparms (self);
-		// respawn		
+		// respawn
 		PutClientInServer ();
 	}
 	else if (deathmatch)
@@ -477,7 +523,7 @@ void() respawn =
 		CopyToBodyQue (self);
 		// set default spawn parms
 		SetNewParms ();
-		// respawn		
+		// respawn
 		PutClientInServer ();
 		// set the skin correctly.
 		TeamSetSkin();
@@ -487,6 +533,22 @@ void() respawn =
 		cvar_set("campaign", ftos(campaign));
 		localcmd ("restart\n");
 	}
+};
+
+// horde merge: when in horde coop, respawn a dead teammate with this
+void() horde_respawn_teammate =
+{
+	CopyToBodyQue (self);
+	PutClientInServer ();
+};
+
+// horde merge: when in horde (coop or solo), respawn all by restarting the server
+void() horde_respawn_all =
+{
+	// "change" to the same level to reset everything
+	localcmd ("changelevel ");
+	localcmd(mapname);
+	localcmd("\n");
 };
 
 
@@ -532,6 +594,15 @@ void() ClientKill =
 	}
 
 	bprint("$qc_suicides", self.netname);
+
+	// horde merge: route suicide through PlayerDie so death is registered
+	if (cvar("horde"))
+	{
+		PlayerDie();
+		self.health = 0;
+		return;
+	}
+
 	set_suicide_frame ();
 	self.modelindex = modelindex_player;
 	self.frags = self.frags - 2;	// extra penalty
@@ -567,6 +638,7 @@ float PlayerVisibleToSpawnPoint( entity point ) {
 
 float IDEAL_DIST_FROM_DM_SPAWN_POINT = 384;
 float MIN_DIST_FROM_DM_SPAWN_POINT = 84;
+float MIN_DIST_FROM_HORDE_SPAWN_POINT = 72;
 
 /*
 ============
@@ -674,6 +746,7 @@ entity SelectSpawnPointEX(float forceSpawn) {
 	local   float   numspots, totalspots;
 	local   float   pcount;
 	local entity spots;
+	local entity hordeSpawn;
 
 	numspots = 0;
 	totalspots = 0;
@@ -682,7 +755,35 @@ entity SelectSpawnPointEX(float forceSpawn) {
 	spot = find( world, classname, "testplayerstart" );
 	if ( spot )
 		return spot;
-		
+
+	// horde merge: simpler logic for horde - any info_player_coop with no one on top of it
+	if ( cvar( "horde" ) ) {
+		hordeSpawn = find( world, classname, "info_player_coop" );
+
+		while( hordeSpawn ) {
+			thing = findradius( hordeSpawn.origin, MIN_DIST_FROM_HORDE_SPAWN_POINT );
+
+			pcount = 0;
+
+			while( thing ) {
+				if ( thing.classname == "player" && thing.health > 0 ) {
+					pcount = pcount + 1;
+				}
+
+				thing = thing.chain;
+			}
+
+			if ( pcount == 0 ) {
+				return hordeSpawn;
+			}
+
+			hordeSpawn = find( hordeSpawn, classname, "info_player_coop" );
+		}
+
+		if (coop)
+			return world; // didn't find anything for solo horde, fall through
+	}
+
 	// choose a info_player_deathmatch point
 	if ( coop ) {
 		lastspawn = find( lastspawn, classname, "info_player_coop" );
@@ -920,7 +1021,10 @@ void() PutClientInServer =
 	self.hook_out = FALSE;
 
 	spawn_tdeath (self.origin, self);
-    
+
+	// horde merge: reset player's key count based on shared key counters
+	horde_set_keys(self);
+
     stuffcmd(self, "-attack\n"); // prevent shooting after respawning
 };
 
@@ -1126,6 +1230,17 @@ void() PlayerDeathThink =
 	self.button0 = 0;
 	self.button1 = 0;
 	self.button2 = 0;
+
+	// horde merge: if the manager exists, route respawn through horde rules
+	if (horde_ent)
+	{
+		if ((coop && HordeGetPlayersAlive() <= 0) || (!coop))
+		{
+			horde_respawn_all();
+		}
+		return;
+	}
+
 	respawn();
 };
 
@@ -1640,6 +1755,22 @@ void() PlayerPostThink =
 	if (!(self.flags & FL_ONGROUND))
 		self.jump_flag = self.velocity_z;
 
+	// horde merge: end killspree once enough time has lapsed without a kill
+	local float score;
+	if ((self.killspree > 0) && (time > self.killtime))
+	{
+		dprint("killspree ended.\n");
+
+		if (self.killspree > 1)
+		{
+			score = ceil((self.killspree * self.killspree) / 2);
+			sprint(self, "$qc_horde_streak_ended", ftos(score));
+			self.frags = self.frags + score;
+		}
+
+		self.killspree = 0;
+	}
+
 	CheckPowerups ();
 };
 
@@ -1660,6 +1791,10 @@ void() ClientConnect =
 // -----------------------------------------------------------------------------------
 	unlock_achievement("TO_NA_AREA");
 // -----------------------------------------------------------------------------------
+
+	// horde merge: maintain a count of connected players
+	num_players = num_players + 1;
+
 //ZOID--
 	self.suicide_count = 0;
 	self.ctf_killed = 0;
@@ -1697,6 +1832,15 @@ void() ClientDisconnect =
 		return;
 	// if the level end trigger has been activated, just return
 	// since they aren't *really* leaving
+
+	num_players = num_players - 1;
+
+	// horde merge: a disconnecting player needs to count as dead
+	if(cvar("horde"))
+	{
+		dprint("horde mode, player disconnect\n");
+		self.health = 0;
+	}
 
 	// let everyone else know
 	bprint("$qc_left_game", self.netname, ftos(self.frags));

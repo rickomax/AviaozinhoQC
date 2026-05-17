@@ -601,6 +601,16 @@ void(string gibname, float dm) ThrowHead =
 	self.origin_z = self.origin_z - 24;
 	self.flags = self.flags - (self.flags & FL_ONGROUND);
 	self.avelocity = crandom() * '0 600 0';
+
+	// horde merge: monster gibs fade away so corpses don't pile up
+	if (horde_ent)
+	{
+		if (self.classname != "player")
+		{
+			self.think = MonsterFade;
+			self.nextthink = time + 1;
+		}
+	}
 };
 
 

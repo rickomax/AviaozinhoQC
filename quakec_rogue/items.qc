@@ -1406,9 +1406,13 @@ local float		best;
 	if (self.netname == "$qc_pentagram_of_protection")
 	{
 		other.invincible_time = 1;
-		other.invincible_finished = time + 30;
+		// horde merge: shorter pentagram duration when from a horde drop
+		if (horde_ent)
+			other.invincible_finished = time + 5;
+		else
+			other.invincible_finished = time + 30;
 	}
-	
+
 //	if (self.classname == "item_artifact_invisibility")
 	if (self.netname == "$qc_ring_of_shadows")
 	{
@@ -1420,8 +1424,12 @@ local float		best;
 	if (self.netname == "$qc_quad_damage")
 	{
 		other.super_time = 1;
-		other.super_damage_finished = time + 30;
-	}	
+		// horde merge: shorter quad duration when from a horde drop
+		if (horde_ent)
+			other.super_damage_finished = time + 5;
+		else
+			other.super_damage_finished = time + 30;
+	}
 
 	activator = other;
 	SUB_UseTargets();				// fire all targets / killtargets
@@ -1665,6 +1673,10 @@ DropBackpack
 void() DropBackpack =
 {
 	local entity	item;
+
+	// horde merge: don't drop backpacks in horde mode
+	if (horde_ent)
+		return;
 
 	// this is to compensate for the new way we're hacking the ammo
 	// counts. If they're monsters, just copy shells->shells1 etc.

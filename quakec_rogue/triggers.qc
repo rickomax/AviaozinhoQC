@@ -338,6 +338,16 @@ void(vector org) spawn_tfog =
 	WriteCoord (MSG_BROADCAST, org_z);
 };
 
+// Horde merge: like spawn_tfog but only sends the visual effect (no sound entity).
+void(vector org) spawn_tfog_silent =
+{
+	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
+	WriteByte (MSG_BROADCAST, TE_TELEPORT);
+	WriteCoord (MSG_BROADCAST, org_x);
+	WriteCoord (MSG_BROADCAST, org_y);
+	WriteCoord (MSG_BROADCAST, org_z);
+};
+
 
 void() tdeath_touch =
 {

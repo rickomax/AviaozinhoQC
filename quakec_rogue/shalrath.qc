@@ -103,7 +103,15 @@ void() shal_death3      =[      $death3,        shal_death4     ] {};
 void() shal_death4      =[      $death4,        shal_death5     ] {};
 void() shal_death5      =[      $death5,        shal_death6     ] {};
 void() shal_death6      =[      $death6,        shal_death7     ] {};
-void() shal_death7      =[      $death7,        shal_death7    ] {};
+void() shal_death7      =[      $death7,        shal_death7    ]
+{
+	// horde merge: fade corpse after a delay
+	if (horde_ent)
+	{
+		self.think = MonsterFade;
+		self.nextthink = time + FADETIME;
+	}
+};
 
 
 void() shalrath_pain =

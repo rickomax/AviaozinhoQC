@@ -541,6 +541,8 @@ float AGGRO_ADD     = 1; // random additional wait
 .string category;		// to do find operations by type
 string CATEGORY_MONSTER = "monster";
 
+.float alpha;	// entity transparency (0..1); used by horde mode for corpse fade-out
+
 float num_players;	// active player count, maintained by ClientConnect/Disconnect
 
 //================================================

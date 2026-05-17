@@ -332,21 +332,7 @@ void() PrecacheMonsters =
 	precache_sound ("wizard/wpain.wav");
 	precache_sound ("wizard/wsight.wav");
 
-	// zombies
-	precache_model ("progs/zombie.mdl");
-	precache_model ("progs/h_zombie.mdl");
-	precache_model ("progs/zom_gib.mdl");
-
-	precache_sound ("zombie/z_idle.wav");
-	precache_sound ("zombie/z_idle1.wav");
-	precache_sound ("zombie/z_shot1.wav");
-	precache_sound ("zombie/z_gib.wav");
-	precache_sound ("zombie/z_pain.wav");
-	precache_sound ("zombie/z_pain1.wav");
-	precache_sound ("zombie/z_fall.wav");
-	precache_sound ("zombie/z_miss.wav");
-	precache_sound ("zombie/z_hit.wav");
-	precache_sound ("zombie/idle_w2.wav");
+	// (zombies intentionally not precached: removed from horde mode)
 
 	// ammo
 	precache_model ("maps/b_shell1.bsp");
@@ -570,25 +556,15 @@ entity(string class, vector org, vector temp_angles) SpawnMonster =
 		monster.th_pain = Wiz_Pain;
 		monster.th_die = wiz_die;
 	}
-	else if (class == "zombie")
-	{
-		setmodel (monster, "progs/zombie.mdl");
-		setsize (monster, '-16 -16 -24', '16 16 40');
-		monster.classname = "monster_zombie";
-		org = org + '0 0 32';
-		monster.health = 60;
-		monster.th_stand = zombie_stand1;
-		monster.th_walk = zombie_walk1;
-		monster.th_run = zombie_run1;
-		monster.th_pain = zombie_pain;
-		monster.th_die = zombie_die;
-		monster.th_missile = zombie_missile;
-		monster.target = string_null;
-	}
 	else
 	{
 		dprint("ERROR: No monster provided");
 	}
+
+	// Horde mode: enemies are 30% weaker than their normal counterparts.
+	// SpawnMonster is only invoked by the horde wave manager, so this is
+	// scoped to horde without an explicit cvar check.
+	monster.health = ceil(monster.health * 0.7);
 
 	setorigin (monster, org);
 	monster.origin_z = monster.origin_z + 1;
@@ -1250,11 +1226,6 @@ void(string name, vector org, vector temp_angles) SpawnSquad2 =
 			SpawnMonster("knight", org + '40 0 0', temp_angles);
 		}
 	}
-	else if (name == "2 zombies")
-	{
-		SpawnMonster("zombie", org + '40 0 0', temp_angles);
-		SpawnMonster("zombie", org + '-40 0 0', temp_angles);
-	}
 	else if (name == "1 wizard")
 		SpawnMonster("wizard", org + '0 0 0', temp_angles);
 	else if (name == "2 hellknights")
@@ -1482,11 +1453,10 @@ void() SpawnWave2 =
 	{
 		if (self.fodder > 0)
 		{
-			r = random() * 4;
+			// Zombies removed from horde mode; redistribute weight to knights.
+			r = random() * 3;
 			if (r < 2)
 				squad_name = "2 knights";
-			else if (r < 3)
-				squad_name = "2 zombies";
 			else
 			{
 				squad_name = "1 wizard";

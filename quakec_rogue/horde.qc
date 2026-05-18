@@ -1583,11 +1583,11 @@ float() SpawnWavePrep =
 	dprint(ftos(self.wave));
 	dprint("\n");
 
-	// scale start wave based on difficulty
+	// scale start wave based on difficulty (mg1new: eased, +4/+2 instead of +6/+3)
 	if (skill >= 3)
-		temp_wave = self.wave + 6;
+		temp_wave = self.wave + 4;
 	else if (skill >= 2)
-		temp_wave = self.wave + 3;
+		temp_wave = self.wave + 2;
 	else
 		temp_wave = self.wave;
 
@@ -1597,34 +1597,34 @@ float() SpawnWavePrep =
 	else
 		self.army = FALSE;
 
-	// player scalar
+	// player scalar (mg1new: slightly reduced)
 	playercount = HordeGetPlayersAlive();
 	if (playercount >= 4)
-		playerscalar = 2;
+		playerscalar = 1.75;
 	else if (playercount >= 3)
-		playerscalar = 1.5;
+		playerscalar = 1.4;
 	else if (playercount >= 2)
-		playerscalar = 1.25;
+		playerscalar = 1.2;
 	else
 		playerscalar = 1;
 
-	// Boss count
+	// Boss count (mg1new: divided by 5/10 instead of 4/8, ceil for primary)
 	if (temp_wave - (floor(temp_wave / 3) * 3) == 0)
 	{
-		self.bosses = floor((temp_wave + 1) / 4);
+		self.bosses = ceil((temp_wave + 1) / 5);
 	}
 	else if ((skill > 1) && (!self.army) && (temp_wave > 9))
 	{
-		self.bosses = floor((temp_wave + 1) / 8);
+		self.bosses = floor((temp_wave + 1) / 10);
 	}
 
-	// Elite count
+	// Elite count (mg1new: scaled to 75% of original)
 	self.elites = ceil((temp_wave - 1) / 3) - floor(self.bosses / 2);
-	self.elites = floor(self.elites * playerscalar);
+	self.elites = floor(self.elites * playerscalar * 0.75);
 
-	// Fodder count
+	// Fodder count (mg1new: scaled to 75% of original)
 	self.fodder = (temp_wave + 2) - (self.bosses * 2 + self.elites);
-	self.fodder = floor(self.fodder * playerscalar);
+	self.fodder = floor(self.fodder * playerscalar * 0.75);
 
 	// Trigger map entities
 	p = find (world, targetname, self.target);
@@ -1742,17 +1742,14 @@ void() Wavecheck =
 
 	wave_mod3 = self.wave - (floor(self.wave / 3) * 3);
 
-	if ((wave_mod3 == 0) || (self.wave < 3))
+	// mg1new: every wave now requires ALL monsters dead (was: <=5 alive on
+	// non-boss waves). wave_mod3 is still used below to decide whether to
+	// spawn a key after this wave.
+	dprint("check monsters killed - ALL must die\n");
+	if (HordeGetMonstersAlive() > 0)
 	{
-		dprint("check monsters killed as boss wave\n");
-		if (HordeGetMonstersAlive() > 0)
-			return;
-	}
-	else
-	{
-		dprint("check monsters killed as any other wave\n");
-		if (HordeGetMonstersAlive() > 5)
-			return;
+		dprint("Monsters still alive, wave continues.\n");
+		return;
 	}
 
 	dprint("wavecheck looks good! Respawning players\n");

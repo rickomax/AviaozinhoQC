@@ -244,9 +244,10 @@ void() GotoNextMap =
 		changelevel (mapname);
 	else
 	{
-		if (cvar("horde"))
-			changelevel(HordeRandomMap());
-		else
+		// mg1new: no longer forces HordeRandomMap on horde; fall through to nextmap.
+		//if (cvar("horde"))
+		//	changelevel(HordeRandomMap());
+		//else
 			changelevel (nextmap);
 	}
 };

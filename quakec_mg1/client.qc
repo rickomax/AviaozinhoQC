@@ -246,9 +246,9 @@ void() GotoNextMap =
 		changelevel (mapname);
 	else
 	{
-		if (cvar("horde"))
-			changelevel(HordeRandomMap());
-		else
+		//if (cvar("horde"))
+		//	changelevel(HordeRandomMap());
+		//else
 			changelevel (nextmap);
 	}
 };

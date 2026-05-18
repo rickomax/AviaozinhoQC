@@ -1562,7 +1562,7 @@ void() SpawnWave2 =
 			if (r < 2)
 				squad_name = "2 knights";
 			else if (r < 3)
-				squad_name = "2 zombies";
+				squad_name = "1 enforcer";
 			else
 			{
 				squad_name = "1 wizard";
@@ -1702,9 +1702,9 @@ float() SpawnWavePrep =
 	// AY FEB07 scaling start wave based on difficulty
 	local float temp_wave;
 	if (skill >= 3)
-		temp_wave = self.wave + 6;
+		temp_wave = self.wave + 4; // Reduzido de +6 para +4 (mais fácil)
 	else if (skill >= 2)
-		temp_wave = self.wave + 3;
+		temp_wave = self.wave + 2; // Reduzido de +3 para +2 (mais fácil)
 	else
 		temp_wave = self.wave;
 	
@@ -1714,35 +1714,35 @@ float() SpawnWavePrep =
 	else
 		self.army = FALSE;
 	
-	// player scalar
+	// player scalar (reduzido ligeiramente para mais fácil)
 	playercount = HordeGetPlayersAlive();
 	if (playercount >= 4)
-		playerscalar = 2;
+		playerscalar = 1.75; // Reduzido de 2
 	else if (playercount >= 3)
-		playerscalar = 1.5;
+		playerscalar = 1.4; // Reduzido de 1.5
 	else if (playercount >= 2)
-		playerscalar = 1.25;
+		playerscalar = 1.2; // Reduzido de 1.25
 	else
 		playerscalar = 1;
 	
-	// Boss Count
+	// Boss Count (reduzido ligeiramente)
 	if (temp_wave % 3 == 0)
 	{
-		self.bosses = floor((temp_wave+1)/4);
+		self.bosses = ceil((temp_wave+1)/5); // Reduzido de /4 para /5 (mais fácil)
 	}
 	else if ((skill > 1) && (!self.army) && (temp_wave > 9))
 	{
 		//AY feb07, some extra spice
-		self.bosses = floor((temp_wave+1)/8);
+		self.bosses = floor((temp_wave+1)/10); // Reduzido de /8 para /10 (mais fácil)
 	}
 	
-	// Elite Count
+	// Elite Count (reduzido para 75% do original)
 	self.elites = ceil((temp_wave - 1)/3) - floor(self.bosses/2);
-	self.elites = floor(self.elites * playerscalar);
+	self.elites = floor(self.elites * playerscalar * 0.75); // *0.75 para mais fácil
 	
-	// Fodder Count
+	// Fodder Count (reduzido para 75% do original)
 	self.fodder = (temp_wave + 2) - (self.bosses * 2 + self.elites);
-	self.fodder = floor(self.fodder * playerscalar);
+	self.fodder = floor(self.fodder * playerscalar * 0.75); // *0.75 para mais fácil
 	
 	// Trigger map entities
 	local entity stemp;
@@ -1858,22 +1858,12 @@ void() Wavecheck =
 		}
 	}
 	
-	// Early exit for kill count
-	if ((self.wave % 3 == 0) || (self.wave < 3)) // Be exact?
+	// CORRIGIDO: Exige que TODOS os monstros sejam mortos em TODAS as ondas
+	dprint("check monsters killed - ALL must die\n");
+	if (HordeGetMonstersAlive() > 0)
 	{
-		dprint("check monsters killed as boss wave\n");
-		if (HordeGetMonstersAlive() > 0) // testing the new way
-			return;
-		//if (killed_monsters < total_monsters) 
-		//	return;
-	}
-	else
-	{
-		dprint("check monsters killed as any other wave\n");
-		if (HordeGetMonstersAlive() > 5)
-			return;
-		//if (killed_monsters < (total_monsters -5)) 
-		//	return;
+		dprint("Monsters still alive, wave continues.\n");
+		return;
 	}
 	
 	// Made it this far, means wave completed successfully

@@ -274,7 +274,11 @@ void() door_touch =
 		return;
 	}
 
-	other.items = other.items - self.items;
+	// horde merge: spend keys via global counter so all players share keys
+	if (horde_ent)
+		horde_key_spend(self.items);
+	else // standard behavior
+		other.items = other.items - self.items;
 	self.touch = SUB_Null;
 	if (self.enemy)
 		self.enemy.touch = SUB_Null;	// get paired door

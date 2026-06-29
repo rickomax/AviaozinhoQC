@@ -516,6 +516,47 @@ float	cutscene_running;
 entity  tag_token_owner;
 
 //================================================
+//
+// MG1 horde mode globals (merged Sept 24 2021 - Feb 24 2022)
+//
+
+// Worldtype constants used by horde code (matches world.worldtype).
+float WORLDTYPE_MEDIEVAL = 0;
+float WORLDTYPE_METAL    = 1;
+float WORLDTYPE_BASE     = 2;
+
+float isHordeMode;	// cache off horde cvar at start of frame
+
+entity horde_ent;	// global horde manager so code can reference without lookup
+
+float keys_silver;	// number of silver keys the players are carrying
+float keys_gold;	// number of gold keys the players are carrying
+
+float HORDE_START_DELAY        = 10;	// how long to wait before starting
+float HORDE_AMMO_RESPAWN_DELAY = 20;	// how long between horde ammo spawns
+float FADETIME                 = 5;	// how long after death until monsters fade out
+
+float DEFAULT_POWERUP_CHANCE = 0.025;
+float POWERUP_CHANCE_GAIN    = 0.025;
+float powerup_chance;
+
+float KILLSPREE_GAP = 2; // amount of time that can lapse for a kill to no longer count as part of a spree
+float AGGRO_MIN     = 1; // how long to wait before allowing a new aggro
+float AGGRO_ADD     = 1; // random additional wait
+
+// per-entity fields used by horde code
+.float killtime;	// game time at which player got their last kill
+.float killspree;	// player's current killing spree
+.float aggro_time;	// time monster was last aggro'd
+
+.string category;		// to do find operations by type
+string CATEGORY_MONSTER = "monster";
+
+.float alpha;	// entity transparency (0..1); used by horde mode for corpse fade-out
+
+float num_players;	// active player count, maintained by ClientConnect/Disconnect
+
+//================================================
 
 //
 // world fields (FIXME: make globals)
@@ -843,6 +884,17 @@ void(string var, string val) cvar_set = #72;	// sets cvar.value
 
 void(entity client, string s, ...) centerprint = #0:ex_centerprint;	// sprint, but in middle
 
+// Print a centerprint to every connected player (horde merge).
+void centerprint_all(string s)
+{
+	entity e = find(world, classname, "player");
+	while(e)
+	{
+		centerprint(e, s);
+		e = find(e, classname, "player");
+	}
+}
+
 void(vector pos, string samp, float vol, float atten) ambientsound = #74;
 
 string(string s) precache_model2	= #75;		// registered version only
@@ -926,6 +978,22 @@ void() tag_token_drop;
 
 // sphere.qc
 void(entity ownerEntity) sphere_remove;
+
+//
+// horde.qc forward declarations
+//
+float() HordeGetPlayersAlive;
+float() HordeGetMonstersAlive;
+entity() HordeFindTarget;
+void(entity temp_player) horde_set_keys;
+void(float key_item) horde_key_spend;
+void() horde_spawn_powerup;
+void() horde_respawn_teammate;
+void() horde_respawn_all;
+void() remote_wavecheck;
+void() MonsterFade;
+void() GibMonster;
+void(vector org) spawn_tfog_silent;
 
 
 // -----------------------------------------------------------------------------------

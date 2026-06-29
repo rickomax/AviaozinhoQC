@@ -408,6 +408,7 @@ void() StartFrame =
 	teamplay = cvar("teamplay");
 	skill = cvar("skill");
 	cheats_allowed = cvar("sv_cheats");
+	isHordeMode = cvar("horde");	// horde merge: cache off horde cvar
 
     // save off a global here so it gets included in savegames
     if (!campaign_valid) {

@@ -102,3 +102,5 @@ mummy.qc
 timemach.qc
 
 bots/bot.qc				// bot support
+
+horde.qc				// MG1 horde mode merge

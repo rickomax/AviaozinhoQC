@@ -355,7 +355,15 @@ void()	wiz_death4	=[	$death4,		wiz_death5	] {};
 void()	wiz_death5	=[	$death5,		wiz_death6	] {};
 void()	wiz_death6	=[	$death6,		wiz_death7	] {};
 void()	wiz_death7	=[	$death7,		wiz_death8	] {};
-void()	wiz_death8	=[	$death8,		wiz_death8	] {};
+void()	wiz_death8	=[	$death8,		wiz_death8	]
+{
+	// horde merge: fade corpse after a delay
+	if (horde_ent)
+	{
+		self.think = MonsterFade;
+		self.nextthink = time + FADETIME;
+	}
+};
 
 void() wiz_die =
 {

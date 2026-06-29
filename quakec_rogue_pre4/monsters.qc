@@ -138,6 +138,12 @@ void() monster_death_use =
 	if (self.flags & FL_SWIM)
 		self.flags = self.flags - FL_SWIM;
 
+	// horde merge: monsters dying need to update the wave manager
+	if (cvar("horde") && self.classname != "monster_zombie")
+	{
+		remote_wavecheck();
+	}
+
 	if (!self.target)
 		return;
 

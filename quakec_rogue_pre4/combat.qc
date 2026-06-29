@@ -94,16 +94,75 @@ void(entity targ, entity attacker) Killed =
 
 	self.enemy = attacker;
 
+	// horde merge: punish team killspree
+	if (cvar("horde") && (attacker.classname == "player") && (targ.classname == "player"))
+	{
+		dprint("punish teamkill\n");
+		attacker.killtime = 0;
+		attacker.frags = attacker.frags - 2;
+	}
+
 // bump the monster counter
 	if (self.flags & FL_MONSTER)
 	{
-		killed_monsters = killed_monsters + 1;
-		WriteByte (MSG_ALL, SVC_KILLEDMONSTER);
+		// horde merge: track wave kills, killspree, and powerup spawn chance.
+		if (horde_ent)
+		{
+			if (self.classname != "monster_zombie")	// zombies don't count
+			{
+				killed_monsters = killed_monsters + 1;
+				WriteByte (MSG_ALL, SVC_KILLEDMONSTER);
+			}
+
+			if (attacker.classname == "player")
+			{
+				attacker.killspree = attacker.killspree + 1;
+				attacker.killtime = time + KILLSPREE_GAP;
+
+				if (time < attacker.killtime)
+				{
+					if (attacker.killspree >= 14)
+						sprint(attacker, "$qc_horde_streak_generic", ftos(attacker.killspree));
+					else if (attacker.killspree == 13)
+						sprint(attacker, "$qc_horde_streak_13");
+					else if (attacker.killspree == 12)
+						sprint(attacker, "$qc_horde_streak_12");
+					else if (attacker.killspree == 11)
+						sprint(attacker, "$qc_horde_streak_11");
+					else if (attacker.killspree == 10)
+						sprint(attacker, "$qc_horde_streak_10");
+					else if (attacker.killspree == 9)
+						sprint(attacker, "$qc_horde_streak_9");
+					else if (attacker.killspree == 8)
+						sprint(attacker, "$qc_horde_streak_8");
+					else if (attacker.killspree == 7)
+						sprint(attacker, "$qc_horde_streak_7");
+					else if (attacker.killspree == 6)
+						sprint(attacker, "$qc_horde_streak_6");
+					else if (attacker.killspree == 5)
+						sprint(attacker, "$qc_horde_streak_5");
+					else if (attacker.killspree == 4)
+						sprint(attacker, "$qc_horde_streak_4");
+					else if (attacker.killspree == 3)
+						sprint(attacker, "$qc_horde_streak_3");
+					else if (attacker.killspree == 2)
+						sprint(attacker, "$qc_horde_streak_2");
+				}
+			}
+
+			horde_spawn_powerup();
+		}
+		else // standard behavior
+		{
+			killed_monsters = killed_monsters + 1;
+			WriteByte (MSG_ALL, SVC_KILLEDMONSTER);
+		}
+
 		if (attacker.classname == "player")
 		{
 			attacker.frags = attacker.frags + 1;
 		}
-		
+
 		if (attacker != self && attacker.flags & FL_MONSTER)
 		{
 			WriteByte (MSG_ALL, SVC_ACHIEVEMENT);
@@ -267,15 +326,45 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage=
 	// get mad unless of the same class (except for soldiers)
 		if (self != attacker && attacker != self.enemy)
 		{
-			if ( (self.classname != attacker.classname) 
+			if ( (self.classname != attacker.classname)
 			|| (self.classname == "monster_army" ) )
 			{
 				if ( self.classname != "monster_dragon")
 				{
-					if (self.enemy.classname == "player")
-						self.oldenemy = self.enemy;
-					self.enemy = attacker;
-					FoundTarget ();
+					// horde merge: enemies obey a reaggro time when player-to-player swap
+					if (cvar("horde"))
+					{
+						if ((self.enemy.classname == "player") &&
+							(attacker.classname == "player"))
+						{
+							if ((!self.aggro_time) ||
+								(self.aggro_time + AGGRO_MIN + (random() * AGGRO_ADD) < time))
+							{
+								self.oldenemy = self.enemy;
+								self.enemy = attacker;
+								self.aggro_time = time;
+								FoundTarget ();
+							}
+							else
+							{
+								dprint("ignore new aggro\n");
+							}
+						}
+						else
+						{
+							if (self.enemy.classname == "player")
+								self.oldenemy = self.enemy;
+							self.enemy = attacker;
+							FoundTarget ();
+						}
+					}
+					else // original behavior
+					{
+						if (self.enemy.classname == "player")
+							self.oldenemy = self.enemy;
+						self.enemy = attacker;
+						FoundTarget ();
+					}
 				}
 			}
 		}

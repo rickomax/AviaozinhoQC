@@ -210,8 +210,6 @@ void() worldspawn =
 	W_Precache ();			// get weapon precaches
 
 // sounds used from C physics code
-        precache_sound ("zombie/z_miss.wav");
-        precache_sound ("zombie/z_hit.wav");
 	precache_sound ("demon/dland2.wav");		// landing thud
 	precache_sound ("misc/h2ohit1.wav");		// landing splash
 
@@ -393,10 +391,7 @@ void() InitBodyQue =
 // respawned elsewhere
 void(entity ent) CopyToBodyQue =
 {
-	
-        bodyque_head.touch = ent.touch;
-        bodyque_head.solid = ent.solid;
-        bodyque_head.angles = ent.angles;
+	bodyque_head.angles = ent.angles;
 	bodyque_head.model = ent.model;
 	bodyque_head.modelindex = ent.modelindex;
 	bodyque_head.frame = ent.frame;

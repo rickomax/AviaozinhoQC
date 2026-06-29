@@ -35,7 +35,6 @@ weapons.qc
 fog.qc // Fog controls
 world.qc
 client.qc
-KickGibs.qc
 player.qc
 monsters.qc
 doors.qc
